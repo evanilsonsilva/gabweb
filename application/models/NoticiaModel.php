@@ -2,7 +2,7 @@
 
 class NoticiaModel extends CI_Model {
     private $tbNoticia = "noticia";
-    private $a;
+    
     public function insert($tituloNtc, $subtituloNtc, $textoNtc, $fotoNtc, $dataHoraNtc, $ativoNtc) {
         $data = array(
             'titulo_ntc' => $tituloNtc,
