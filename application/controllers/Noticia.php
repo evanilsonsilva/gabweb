@@ -7,6 +7,16 @@ class Noticia extends CI_Controller {
     public function index() {
         $this->load->view('teste');
     }
+    
+    public function cadastrar() {
+        $this->load->view('template/html-header');
+        $this->load->view('template/header');
+        $this->load->view('template/aside');
+        $this->load->view('noticia/formCadastrar');
+        $this->load->view('template/footer');
+        $this->load->view('template/html-footer');
+        
+    }
 
     public function processaCadastrar() {
         $titulo = $this->input->post('titulo');
