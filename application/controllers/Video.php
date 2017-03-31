@@ -2,10 +2,19 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class VideoModel extends CI_Controller {
+class Video extends CI_Controller {
 
     public function index() {
         $this->load->view('teste');
+    }
+    
+    public function cadastrar() {
+        $this->load->view('template/html-header');
+        $this->load->view('template/header');
+        $this->load->view('template/aside');
+        $this->load->view('video/formCadastrar');
+        $this->load->view('template/footer');
+        $this->load->view('template/html-footer');
     }
 
     public function processaCadastrar() {
