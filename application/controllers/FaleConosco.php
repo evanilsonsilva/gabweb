@@ -5,7 +5,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class FaleConosco extends CI_Controller {
 
     public function index() {
-        $this->load->view('teste');
+        //$this->load->view('teste');
+        $this->load->view('template/html-header');
+        $this->load->view('template/header');
+        $this->load->view('template/aside');
+        $this->load->view('faleconosco/formCadastrar');
+        $this->load->view('template/footer');
+        $this->load->view('template/html-footer');
     }
 
     public function processaCadastrar() {
