@@ -10,7 +10,9 @@
  * @package Core
  * @since 2.2
  */
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 if (!function_exists('apc_fetch') && function_exists('apcu_fetch')) {
     /**
      * Fetch a stored variable from the cache.
@@ -103,9 +105,10 @@ if (!function_exists('http_build_url')) {
      * @see https://github.com/fuel/core/blob/974281dde67345ca8d7cfa27bcf4aa55c984d48e/base.php#L248
      * @see http://stackoverflow.com/questions/7751679/php-http-build-url-and-pecl-install/7753154#comment11239561_7753154
      */
+     
     function http_build_url($url, $parts = array(), $flags = HTTP_URL_REPLACE, &$new_url = false) {
         $keys = array('user', 'pass', 'port', 'path', 'query', 'fragment');
-
+        
         // HTTP_URL_STRIP_ALL becomes all the HTTP_URL_STRIP_Xs
         if ($flags & HTTP_URL_STRIP_ALL) {
             $flags |= HTTP_URL_STRIP_USER;
@@ -125,7 +128,7 @@ if (!function_exists('http_build_url')) {
 
         // parse the original URL
         $parse_url = is_array($url) ? $url : parse_url($url);
-
+        
         // make sure we always have a scheme, host and path
         empty($parse_url['scheme']) and $parse_url['scheme'] = $current_url['scheme'];
         empty($parse_url['host']) and $parse_url['host'] = $current_url['host'];
@@ -166,7 +169,7 @@ if (!function_exists('http_build_url')) {
                 }
             }
         }
-
+         
         // strips all the applicable sections of the URL
         // note: scheme and host are never stripped
         foreach ($keys as $key) {
@@ -187,20 +190,20 @@ if (!function_exists('http_build_url')) {
             .((isset($parse_url['query'])) ? '?'.$parse_url['query'] : '')
             .((isset($parse_url['fragment'])) ? '#'.$parse_url['fragment'] : '');
     }
-
-    function current_url() {
-        $pageURL = 'http';
-        if (val('HTTPS', $_SERVER) === "on") {
-            $pageURL .= "s";
-        }
-        $pageURL .= "://";
-        if ($_SERVER["SERVER_PORT"] != "80") {
-            $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-        } else {
-            $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-        }
-        return $pageURL;
-    }
+    //die("asddas");
+    //function current_url() {
+    //    $pageURL = 'http';
+    //    if (val('HTTPS', $_SERVER) === "on") {
+    //        $pageURL .= "s";
+    //    }
+    //    $pageURL .= "://";
+    //    if ($_SERVER["SERVER_PORT"] != "80") {
+    //        $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+    //    } else {
+    //        $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+    //    }
+    //    return $pageURL;
+    //}
 }
 
 if (!function_exists('is_id')) {

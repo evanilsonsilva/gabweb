@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<?php
+include(getcwd()."/application/config/integration.php");
+?><!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -35,27 +37,28 @@
 
                 <form action="<?php echo base_url(); ?>sistema/processaLogin" method="post">
                     <div class="form-group has-feedback">
-                        <input type="email" name="email" class="form-control" placeholder="E-mail">
+                        <input type="email" name="Email" class="form-control" placeholder="E-mail">
                         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     </div>
                     <div class="form-group has-feedback">
-                        <input type="password" name="senha" class="form-control" placeholder="Senha">
+                        <input type="password" name="Password" class="form-control" placeholder="Senha">
                         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                     </div>
                     <div class="row">
                         <div class="col-xs-8">
                             <div class="checkbox icheck">
                                 <label>
-                                    <input type="checkbox"> Continuar conectado
+                                    <input type="checkbox" name="RememberMe" value="1"> Continuar conectado
                                 </label>
                             </div>
                         </div>
                         <!-- /.col -->
                         <div class="col-xs-4">
-                            <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
+                            <button type="button" id="entrar" class="btn btn-primary btn-block btn-flat">Entrar</button>
                         </div>
                         <!-- /.col -->
                     </div>
+                    <input type="hidden" name="TransientKey" value="<?=Gdn::session()->ensureTransientKey();?>" />
                 </form>
 
                 <a href="#">Eu esqueci minha senha</a><br>
@@ -72,6 +75,7 @@
         <script src="<?php echo base_url(); ?>vendor/bootstrap/js/bootstrap.min.js"></script>
         <!-- iCheck -->
         <script src="<?php echo base_url(); ?>vendor/plugins/iCheck/icheck.min.js"></script>
+        <script src="<?php echo base_url(); ?>assets/js/integration.js"></script>
         <script>
             $(function () {
                 $('input').iCheck({
@@ -79,6 +83,9 @@
                     radioClass: 'iradio_square-blue',
                     increaseArea: '20%' // optional
                 });
+            });
+            $("#entrar").on("click",function(){
+                login();
             });
         </script>
     </body>

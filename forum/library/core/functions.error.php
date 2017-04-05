@@ -26,7 +26,9 @@ class Gdn_ErrorException extends ErrorException {
      * @param int $Context
      */
     public function __construct($Message, $ErrorNumber, $File, $Line, $Context) {
+    
         parent::__construct($Message, $ErrorNumber, 0, $File, $Line);
+        
         $this->_Context = $Context;
     }
 

@@ -15,6 +15,7 @@
  * real work has been done. Nothing has been included yet, aside from this file.
  * No Garden features are available yet.
  */
+
 if (file_exists(PATH_ROOT.'/conf/bootstrap.before.php')) {
     require_once(PATH_ROOT.'/conf/bootstrap.before.php');
 }
@@ -101,6 +102,7 @@ setHandlers();
 
 // ApplicationManager
 Gdn::factoryInstall(Gdn::AliasApplicationManager, 'Gdn_ApplicationManager');
+
 Gdn_Autoloader::attach(Gdn_Autoloader::CONTEXT_APPLICATION);
 
 // ThemeManager
@@ -110,6 +112,7 @@ Gdn::factoryInstall(Gdn::AliasThemeManager, 'Gdn_ThemeManager');
 Gdn::factoryInstall(Gdn::AliasPluginManager, 'Gdn_PluginManager');
 
 // Load the configurations for enabled Applications.
+
 foreach (Gdn::applicationManager()->enabledApplicationFolders() as $applicationName => $applicationFolder) {
     Gdn::config()->load(PATH_APPLICATIONS."/{$applicationFolder}/settings/configuration.php");
 }

@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<?php
+include(getcwd()."/application/config/integration.php");
+?><!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
