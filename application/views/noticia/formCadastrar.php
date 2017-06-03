@@ -46,7 +46,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Texto</label>
-                                        <textarea name="titulo" class="form-control" rows="5"></textarea>
+                                        <textarea name="texto" class="form-control" rows="5"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -60,7 +60,22 @@
                                 </div>
                                 <div class="col-md-6"></div>
                             </div>
-
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tipo</label>
+                                        <select name="tipo" class="form-control">
+                                            <option value="0">Público</option>
+                                            <option value="1">Profissional</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6"></div>
+                            </div>
+                            <input type="hidden" name="dataHora" value="<?=date("Y-m-d H:i:s")?>" />
+                            <input type="hidden" name="ativo" value="1" />
+                            
                             <div class="row">
                                 <div class="col-md-5"></div>
                                 <div class="col-md-2">

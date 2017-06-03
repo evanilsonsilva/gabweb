@@ -4940,3 +4940,10 @@ table.text-center th {
     white-space: normal !important;
   }
 }
+/*
+ * Custom classes
+ * ------------------------------
+ */
+.w600{
+    width:600px;
+}

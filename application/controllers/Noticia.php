@@ -20,14 +20,15 @@ class Noticia extends CI_Controller {
 
     public function processaCadastrar() {
         $titulo = $this->input->post('titulo');
-        $sibtitulo = $this->input->post('sibtitulo');
+        $subtitulo = $this->input->post('subtitulo');
         $texto = $this->input->post('texto');
         $foto = $this->input->post('foto');
+        $tipo = $this->input->post('tipo');
         $dataHora = $this->input->post('dataHora');
         $ativo = $this->input->post('ativo');
 
         $this->load->model('NoticiaModel');
-        if ($this->NoticiaModel->insert($titulo, $sibtitulo, $texto, $foto, $dataHora, $ativo)) {
+        if ($this->NoticiaModel->insert($titulo, $subtitulo, $texto, $foto, $tipo,$dataHora, $ativo)) {
             $response = array('result' => 'true', 'msg' => 'Mensagem enviada com sucesso!');
         } else {
             $response = array('result' => 'false', 'msg' => 'A mensagem não foi enviada!');
@@ -45,6 +46,7 @@ class Noticia extends CI_Controller {
             $json["subtitulo"] = $row->subtitulo_ntc;
             $json["texto"] = $row->texto_ntc;
             $json["foto"] = $row->foto_ntc;
+            $json["tipo"] = $row->tipo_ntc;
             $json["dataHora"] = $row->dataHora_ntc;
             $json["ativo"] = $row->ativo_ntc;
             array_push($response, $json);
@@ -62,6 +64,7 @@ class Noticia extends CI_Controller {
             $json["subtitulo"] = $row->subtitulo_ntc;
             $json["texto"] = $row->texto_ntc;
             $json["foto"] = $row->foto_ntc;
+            $json["tipo"] = $row->tipo_ntc;
             $json["dataHora"] = $row->dataHora_ntc;
             $json["ativo"] = $row->ativo_ntc;
             array_push($response, $json);
@@ -74,11 +77,12 @@ class Noticia extends CI_Controller {
         $sibtitulo = $this->input->post('sibtitulo');
         $texto = $this->input->post('texto');
         $foto = $this->input->post('foto');
+        $tipo = $this->input->post('tipo');
         $dataHora = $this->input->post('dataHora');
         $ativo = $this->input->post('ativo');
 
         $this->load->model('NoticiaModel');
-        if ($this->NoticiaModel->update($id, $titulo, $sibtitulo, $texto, $foto, $dataHora, $ativo)) {
+        if ($this->NoticiaModel->update($id, $titulo, $sibtitulo, $texto, $foto, $tipo, $dataHora, $ativo)) {
             $response = array('result' => 'true', 'msg' => 'Mensagem atualizada com sucesso!');
         } else {
             $response = array('result' => 'false', 'msg' => 'A mensagem não foi atualizada!');

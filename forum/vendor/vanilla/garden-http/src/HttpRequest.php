@@ -74,7 +74,7 @@ class HttpRequest extends HttpMessage {
             'protocolVersion' => '1.1',
             'auth' => [],
             'timeout' => 0,
-            'verifyPeer' => true
+            'verifyPeer' => false
         ];
 
         $this->setProtocolVersion($options['protocolVersion']);

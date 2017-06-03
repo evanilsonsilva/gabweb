@@ -58,11 +58,11 @@ include(getcwd()."/application/config/integration.php");
                         </div>
                         <!-- /.col -->
                     </div>
-                    <input type="hidden" name="TransientKey" value="<?=Gdn::session()->ensureTransientKey();?>" />
+                    <input type="hidden" name="TransientKey" id="TransientKey" value="<?=Gdn::session()->ensureTransientKey();?>" />
                 </form>
 
                 <a href="#">Eu esqueci minha senha</a><br>
-                <a href="#" class="text-center">Cadastrar um novo usuário</a>
+                <!-- <a href="<?php echo base_url(); ?>/sistema/cadastro" class="text-center">Cadastrar um novo usuário</a> -->
 
             </div>
             <!-- /.login-box-body -->

@@ -1282,6 +1282,10 @@ class Gdn_Controller extends Gdn_Pluggable {
             $this->setJson('InformMessages', $this->_InformMessages);
             $this->setJson('ErrorMessages', $this->_ErrorMessages);
             $this->setJson('RedirectUrl', $this->RedirectUrl);
+            $this->setJson('UserName', Gdn::session()->User->Name);
+            $this->setJson('UserMail', Gdn::session()->User->Email);
+            $this->setJson('Name', Gdn::UserMetaModel()->GetUserMeta(Gdn::session()->UserID, 'Profile.Nome')["Profile.Nome"]);
+
 
             // Make sure the database connection is closed before exiting.
             $this->finalize();

@@ -22,4 +22,8 @@ class Sistema extends CI_Controller {
 	{
 		$this->load->view('sistema/login');
 	}
+    	public function cadastro()
+	{
+		$this->load->view('sistema/cadastro');
+	}
 }

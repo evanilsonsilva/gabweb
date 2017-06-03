@@ -3,12 +3,13 @@
 class NoticiaModel extends CI_Model {
     private $tbNoticia = "noticia";
     
-    public function insert($tituloNtc, $subtituloNtc, $textoNtc, $fotoNtc, $dataHoraNtc, $ativoNtc) {
+    public function insert($tituloNtc, $subtituloNtc, $textoNtc, $fotoNtc, $tipoNtc, $dataHoraNtc, $ativoNtc) {
         $data = array(
             'titulo_ntc' => $tituloNtc,
             'subtitulo_ntc' => $subtituloNtc,
             'texto_ntc' => $textoNtc,
             'foto_ntc' => $fotoNtc,
+            'tipo_ntc' => $tipoNtc,
             'dataHora_ntc' => $dataHoraNtc,
             'ativo_ntc' => $ativoNtc       
         );
@@ -20,7 +21,7 @@ class NoticiaModel extends CI_Model {
     }
     
     public function get($id) {
-        $query = $this->db->select('id_ntc, titulo_ntc, subtitulo_ntc, texto_ntc, foto_ntc, dataHora_ntc, ativo_ntc')
+        $query = $this->db->select('id_ntc, titulo_ntc, subtitulo_ntc, texto_ntc, foto_ntc, tipo_ntc, dataHora_ntc, ativo_ntc')
                 ->from($this->tbNoticia)
                 ->where('id_ntc', $id)
                 ->get();
@@ -28,19 +29,20 @@ class NoticiaModel extends CI_Model {
     }
     
     public function getList() {
-        $query = $this->db->select('id_ntc, titulo_ntc, subtitulo_ntc, texto_ntc, foto_ntc, dataHora_ntc, ativo_ntc')
+        $query = $this->db->select('id_ntc, titulo_ntc, subtitulo_ntc, texto_ntc, foto_ntc, tipo_ntc, dataHora_ntc, ativo_ntc')
                 ->from($this->tbNoticia)
                 ->order_by('id_ntc', 'desc')
                 ->get();
         return $query->result();
     }
     
-    public function update($id, $tituloNtc, $subtituloNtc, $textoNtc, $fotoNtc, $dataHoraNtc, $ativoNtc) {
+    public function update($id, $tituloNtc, $subtituloNtc, $textoNtc, $fotoNtc, $tipoNtc, $dataHoraNtc, $ativoNtc) {
         $data = array(
             'titulo_ntc' => $tituloNtc,
             'subtitulo_ntc' => $subtituloNtc,
             'texto_ntc' => $textoNtc,
             'foto_ntc' => $fotoNtc,
+            'tipo_ntc' => $tipoNtc,
             'dataHora_ntc' => $dataHoraNtc,
             'ativo_ntc' => $ativoNtc       
         );

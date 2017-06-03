@@ -40,6 +40,125 @@ class AdminProfissionalPlugin extends Gdn_Plugin {
 
     }
 
+
+
+
+    /**
+     * Ajax Signin process that multiple authentication methods.
+     *
+     * @access public
+     * @since 2.0.0
+     * @author Pablo Silveira
+     *
+     * @param string $Method
+     * @param array $Arg1
+     * @return string Rendered XHTML template.
+     */
+    public function AjaxsignIn($Method = false, $Arg1 = false) {
+        if (!Gdn::Request()->isPostBack()) {
+            $this->checkOverride('SignIn', $this->target());
+        }
+
+        Gdn::session()->ensureTransientKey();
+
+        $this->addJsFile('entry.js');
+        $this->setData('Title', t('Sign In'));
+        $this->Form->addHidden('Target', $this->target());
+        $this->Form->addHidden('ClientHour', date('Y-m-d H:00')); // Use the server's current hour as a default.
+
+        // Additional signin methods are set up with plugins.
+        $Methods = array();
+
+        $this->setData('Methods', $Methods);
+        $this->setData('FormUrl', url('entry/signin'));
+
+        $this->fireEvent('SignIn');
+
+        if ($this->Form->isPostBack()) {
+            $this->Form->validateRule('Email', 'ValidateRequired', sprintf(t('%s is required.'), t(UserModel::signinLabelCode())));
+            $this->Form->validateRule('Password', 'ValidateRequired');
+
+            if (!$this->Request->isAuthenticatedPostBack() && !c('Garden.Embed.Allow')) {
+                $this->Form->addError('Please try again.');
+            }
+
+            // Check the user.
+            if ($this->Form->errorCount() == 0) {
+                $Email = $this->Form->getFormValue('Email');
+                $User = Gdn::userModel()->GetByEmail($Email);
+                if (!$User) {
+                    $User = Gdn::userModel()->GetByUsername($Email);
+                }
+
+                if (!$User) {
+                    $this->Form->addError('@'.sprintf(t('User not found.'), strtolower(t(UserModel::SigninLabelCode()))));
+                    Logger::event('signin_failure', Logger::INFO, '{signin} failed to sign in. User not found.', array('signin' => $Email));
+                } else {
+                    // Check the password.
+                    $PasswordHash = new Gdn_PasswordHash();
+                    $Password = $this->Form->getFormValue('Password');
+                    try {
+                        $PasswordChecked = $PasswordHash->checkPassword($Password, val('Password', $User), val('HashMethod', $User));
+
+                        // Rate limiting
+                        Gdn::userModel()->rateLimit($User, $PasswordChecked);
+
+                        if ($PasswordChecked) {
+                            // Update weak passwords
+                            $HashMethod = val('HashMethod', $User);
+                            if ($PasswordHash->Weak || ($HashMethod && strcasecmp($HashMethod, 'Vanilla') != 0)) {
+                                $Pw = $PasswordHash->hashPassword($Password);
+                                Gdn::userModel()->setField(val('UserID', $User), array('Password' => $Pw, 'HashMethod' => 'Vanilla'));
+                            }
+
+                            Gdn::session()->start(val('UserID', $User), true, (bool)$this->Form->getFormValue('RememberMe'));
+                            if (!Gdn::session()->checkPermission('Garden.SignIn.Allow')) {
+                                $this->Form->addError('ErrorPermission');
+                                Gdn::session()->end();
+                            } else {
+                                $ClientHour = $this->Form->getFormValue('ClientHour');
+                                $HourOffset = Gdn::session()->User->HourOffset;
+                                if (is_numeric($ClientHour) && $ClientHour >= 0 && $ClientHour < 24) {
+                                    $HourOffset = $ClientHour - date('G', time());
+                                }
+
+                                if ($HourOffset != Gdn::session()->User->HourOffset) {
+                                    Gdn::userModel()->setProperty(Gdn::session()->UserID, 'HourOffset', $HourOffset);
+                                }
+
+                                Gdn::userModel()->fireEvent('AfterSignIn');
+                                
+                                //$this->_setRedirect();
+                            }
+                        } else {
+                            $this->Form->addError('Invalid password.');
+                            Logger::event(
+                                'signin_failure',
+                                Logger::WARNING,
+                                '{username} failed to sign in.  Invalid password.',
+                                array('InsertName' => $User->Name)
+                            );
+
+                        }
+                    } catch (Gdn_UserException $Ex) {
+                        $this->Form->addError($Ex);
+                    }
+                }
+            }
+
+        } 
+
+
+        return $this->render();
+    }
+
+
+
+
+
+
+
+
     /**
      * StyleCss Event Hook
      *

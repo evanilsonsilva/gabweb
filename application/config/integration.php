@@ -38,7 +38,7 @@ $enabledApplications = Gdn::applicationManager()->enabledApplicationFolders();
 $dispatcher->enabledApplicationFolders($enabledApplications);
 $dispatcher->passProperty('EnabledApplications', $enabledApplications);
 
-if(Gdn::session()->UserID==0 && $_SERVER["REQUEST_URI"]!="/"){
+if(Gdn::session()->UserID==0 && !($_SERVER["REQUEST_URI"]!="/" ||  $_SERVER["REQUEST_URI"]!="/sistema/cadastro/")){
 header("location:/");
 }
 ?>

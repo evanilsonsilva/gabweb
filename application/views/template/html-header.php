@@ -1,5 +1,8 @@
 <?php
 include(getcwd()."/application/config/integration.php");
+var_dump(Gdn::session());
+//var_dump(Gdn::UserMetaModel()->GetUserMeta(Gdn::session()->UserID, 'Profile.Nome'));
+//var_dump(Gdn::UserMetaModel()->GetUserMeta(Gdn::session()->UserID, 'Profile.CRM'));
 ?><!DOCTYPE html>
 <html>
     <head>

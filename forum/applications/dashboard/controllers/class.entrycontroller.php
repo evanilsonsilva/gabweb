@@ -903,12 +903,12 @@ EOT;
         $this->setData('FormUrl', url('entry/signin'));
 
         $this->fireEvent('SignIn');
-
+         
         if ($this->Form->isPostBack()) {
             $this->Form->validateRule('Email', 'ValidateRequired', sprintf(t('%s is required.'), t(UserModel::signinLabelCode())));
             $this->Form->validateRule('Password', 'ValidateRequired');
-
-            if (!$this->Request->isAuthenticatedPostBack() && !c('Garden.Embed.Allow')) {
+           
+            if (!$this->Request->isAuthenticatedPostBack() && !c('Garden.Embed.Allow') && !$_POST["android"]==1) {
                 $this->Form->addError('Please try again.');
             }
 
@@ -986,119 +986,7 @@ EOT;
         return $this->render();
     }
 
-        /**
-     * Ajax Signin process that multiple authentication methods.
-     *
-     * @access public
-     * @since 2.0.0
-     * @author Pablo Silveira
-     *
-     * @param string $Method
-     * @param array $Arg1
-     * @return string Rendered XHTML template.
-     */
-    public function AjaxsignIn($Method = false, $Arg1 = false) {
-        if (!$this->Request->isPostBack()) {
-            $this->checkOverride('SignIn', $this->target());
-        }
-
-        Gdn::session()->ensureTransientKey();
-
-        $this->addJsFile('entry.js');
-        $this->setData('Title', t('Sign In'));
-        $this->Form->addHidden('Target', $this->target());
-        $this->Form->addHidden('ClientHour', date('Y-m-d H:00')); // Use the server's current hour as a default.
-
-        // Additional signin methods are set up with plugins.
-        $Methods = array();
-
-        $this->setData('Methods', $Methods);
-        $this->setData('FormUrl', url('entry/signin'));
-
-        $this->fireEvent('SignIn');
-
-        if ($this->Form->isPostBack()) {
-            $this->Form->validateRule('Email', 'ValidateRequired', sprintf(t('%s is required.'), t(UserModel::signinLabelCode())));
-            $this->Form->validateRule('Password', 'ValidateRequired');
-
-            if (!$this->Request->isAuthenticatedPostBack() && !c('Garden.Embed.Allow')) {
-                $this->Form->addError('Please try again.');
-            }
-
-            // Check the user.
-            if ($this->Form->errorCount() == 0) {
-                $Email = $this->Form->getFormValue('Email');
-                $User = Gdn::userModel()->GetByEmail($Email);
-                if (!$User) {
-                    $User = Gdn::userModel()->GetByUsername($Email);
-                }
-
-                if (!$User) {
-                    $this->Form->addError('@'.sprintf(t('User not found.'), strtolower(t(UserModel::SigninLabelCode()))));
-                    Logger::event('signin_failure', Logger::INFO, '{signin} failed to sign in. User not found.', array('signin' => $Email));
-                } else {
-                    // Check the password.
-                    $PasswordHash = new Gdn_PasswordHash();
-                    $Password = $this->Form->getFormValue('Password');
-                    try {
-                        $PasswordChecked = $PasswordHash->checkPassword($Password, val('Password', $User), val('HashMethod', $User));
-
-                        // Rate limiting
-                        Gdn::userModel()->rateLimit($User, $PasswordChecked);
-
-                        if ($PasswordChecked) {
-                            // Update weak passwords
-                            $HashMethod = val('HashMethod', $User);
-                            if ($PasswordHash->Weak || ($HashMethod && strcasecmp($HashMethod, 'Vanilla') != 0)) {
-                                $Pw = $PasswordHash->hashPassword($Password);
-                                Gdn::userModel()->setField(val('UserID', $User), array('Password' => $Pw, 'HashMethod' => 'Vanilla'));
-                            }
-
-                            Gdn::session()->start(val('UserID', $User), true, (bool)$this->Form->getFormValue('RememberMe'));
-                            if (!Gdn::session()->checkPermission('Garden.SignIn.Allow')) {
-                                $this->Form->addError('ErrorPermission');
-                                Gdn::session()->end();
-                            } else {
-                                $ClientHour = $this->Form->getFormValue('ClientHour');
-                                $HourOffset = Gdn::session()->User->HourOffset;
-                                if (is_numeric($ClientHour) && $ClientHour >= 0 && $ClientHour < 24) {
-                                    $HourOffset = $ClientHour - date('G', time());
-                                }
-
-                                if ($HourOffset != Gdn::session()->User->HourOffset) {
-                                    Gdn::userModel()->setProperty(Gdn::session()->UserID, 'HourOffset', $HourOffset);
-                                }
-
-                                Gdn::userModel()->fireEvent('AfterSignIn');
-                                
-                                //$this->_setRedirect();
-                            }
-                        } else {
-                            $this->Form->addError('Invalid password.');
-                            Logger::event(
-                                'signin_failure',
-                                Logger::WARNING,
-                                '{username} failed to sign in.  Invalid password.',
-                                array('InsertName' => $User->Name)
-                            );
-
-                        }
-                    } catch (Gdn_UserException $Ex) {
-                        $this->Form->addError($Ex);
-                    }
-                }
-            }
-
-        } 
-   //else {
-   //         if ($Target = $this->Request->get('Target')) {
-   //             $this->Form->addHidden('Target', $Target);
-   //         }
-   //         $this->Form->setValue('RememberMe', true);
-   //     }
-
-        return $this->render();
-    }
+     
 
     /**
      * Create secure handshake with remote authenticator.
@@ -1360,6 +1248,45 @@ EOT;
      * @param string $InvitationCode Unique code given to invited user.
      */
     public function register($InvitationCode = '') {
+        if (!$this->Request->isPostBack()) {
+            $this->checkOverride('Register', $this->target());
+        }
+
+        $this->fireEvent("Register");
+
+        $this->Form->setModel($this->UserModel);
+
+        // Define gender dropdown options
+        $this->GenderOptions = array(
+            'u' => t('Unspecified'),
+            'm' => t('Male'),
+            'f' => t('Female')
+        );
+
+        // Make sure that the hour offset for new users gets defined when their account is created
+        $this->addJsFile('entry.js');
+
+        $this->Form->addHidden('ClientHour', date('Y-m-d H:00')); // Use the server's current hour as a default
+        $this->Form->addHidden('Target', $this->target());
+
+        $this->setData('NoEmail', UserModel::noEmail());
+
+        $RegistrationMethod = $this->_registrationView();
+        $this->View = $RegistrationMethod;
+        $this->setData('Method', stringBeginsWith($RegistrationMethod, 'Register', false, true));
+        $this->$RegistrationMethod($InvitationCode);
+    }
+    /**
+     * Calls the appropriate registration method based on the configuration setting.
+     *
+     * Events: Register
+     *
+     * @access public
+     * @since 2.0.0
+     *
+     * @param string $InvitationCode Unique code given to invited user.
+     */
+    public function cadastro($InvitationCode = '') {
         if (!$this->Request->isPostBack()) {
             $this->checkOverride('Register', $this->target());
         }
